@@ -267,68 +267,8 @@ export default function CustomerChatPage() {
 
   return (
     <div className="chat-layout">
-      {/* Sidebar */}
-      <div className="chat-sidebar">
-        <div className="chat-sidebar-header">
-          <div style={{ fontWeight: 700, marginBottom: 12 }}>My Requests</div>
-          <form onSubmit={handleNewRequest}>
-            <textarea
-              className="form-textarea"
-              style={{ fontSize: 13, marginBottom: 8, borderRadius: 8 }}
-              placeholder="Describe your request... (e.g. 'I need legal advice on a contract dispute')"
-              value={newRequest}
-              onChange={(e) => setNewRequest(e.target.value)}
-              rows={3}
-              required
-            />
-            <button className="btn btn-primary btn-full btn-sm" type="submit" disabled={submitting}>
-              {submitting ? 'Finding expert...' : '🔍 Find Expert'}
-            </button>
-          </form>
-        </div>
-
-        <div style={{ flex: 1, overflowY: 'auto' }}>
-          {loadingTasks ? (
-            <div className="loading-center"><div className="spinner" /></div>
-          ) : tasks.length === 0 ? (
-            <div style={{ padding: 20, textAlign: 'center', color: 'var(--gray-400)', fontSize: 13 }}>
-              No requests yet. Start by describing what you need above.
-            </div>
-          ) : (
-            tasks.map((task) => (
-              <div
-                key={task._id}
-                onClick={() => selectTask(task)}
-                style={{
-                  padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid var(--gray-100)',
-                  background: activeTask?._id === task._id ? 'var(--primary-light)' : 'transparent',
-                  transition: 'background 0.15s',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-                  <span className={`badge ${statusColor[task.status] || 'badge-gray'}`}>
-                    {task.status}
-                  </span>
-                  <span style={{ fontSize: 10, color: 'var(--gray-400)' }}>
-                    {new Date(task.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="truncate" style={{ fontSize: 13, color: 'var(--gray-700)' }}>
-                  {task.description}
-                </div>
-                {task.serviceProviderId && (
-                  <div className="text-xs text-gray" style={{ marginTop: 4 }}>
-                    Expert: {task.serviceProviderId.name}
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
       {/* Main Chat Area */}
-      <div className="chat-main">
+      <div className="chat-main" style={{ flex: 1 }}>
         {!activeTask ? (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', gap: 32 }}>
 
@@ -441,13 +381,51 @@ export default function CustomerChatPage() {
               </div>
             )}
 
-            {/* Notifying state */}
+            {/* Notifying state — no provider yet */}
             {activeTask.status === 'notifying' && (
-              <div style={{ padding: '0 16px' }}>
-                <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div className="spinner" style={{ width: 16, height: 16, border: '2px solid #c7d2fe', borderTopColor: 'var(--primary)' }} />
-                  Searching for available experts... (up to 2 minutes)
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', gap: 20, textAlign: 'center' }}>
+                {/* Animated pulse rings */}
+                <div style={{ position: 'relative', width: 80, height: 80 }}>
+                  <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid var(--primary)', opacity: 0.3, animation: 'pulse 2s infinite' }} />
+                  <div style={{ position: 'absolute', inset: 8, borderRadius: '50%', border: '2px solid var(--primary)', opacity: 0.5, animation: 'pulse 2s infinite 0.4s' }} />
+                  <div style={{ position: 'absolute', inset: 16, borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
+                    🔍
+                  </div>
                 </div>
+                <div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--gray-800)', marginBottom: 8 }}>
+                    Finding the right expert for you...
+                  </div>
+                  <div style={{ fontSize: 14, color: 'var(--gray-500)', maxWidth: 400, lineHeight: 1.6 }}>
+                    We're matching your request with the best available expert. This usually takes less than 2 minutes. Please stay on this page.
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: 'var(--gray-100)', borderRadius: 20 }}>
+                  <div className="spinner" style={{ width: 14, height: 14, border: '2px solid var(--gray-300)', borderTopColor: 'var(--primary)', flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: 'var(--gray-500)' }}>Notifying available experts...</span>
+                </div>
+              </div>
+            )}
+
+            {/* Expired state — no one accepted */}
+            {activeTask.status === 'expired' && (
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', gap: 16, textAlign: 'center' }}>
+                <div style={{ fontSize: 52 }}>😔</div>
+                <div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--gray-800)', marginBottom: 8 }}>
+                    No expert was available this time
+                  </div>
+                  <div style={{ fontSize: 14, color: 'var(--gray-500)', maxWidth: 400, lineHeight: 1.6 }}>
+                    All our experts were busy when your request came in. Don't worry — please try submitting again and we'll match you right away.
+                  </div>
+                </div>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setActiveTask(null)}
+                  style={{ marginTop: 8, borderRadius: 12, padding: '10px 28px' }}
+                >
+                  🔄 Try Again
+                </button>
               </div>
             )}
 
