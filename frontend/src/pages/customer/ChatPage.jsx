@@ -330,10 +330,77 @@ export default function CustomerChatPage() {
       {/* Main Chat Area */}
       <div className="chat-main">
         {!activeTask ? (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12, color: 'var(--gray-400)' }}>
-            <div style={{ fontSize: 48 }}>💬</div>
-            <div style={{ fontWeight: 600 }}>Select a request or create a new one</div>
-            <div className="text-sm">Describe your issue and we'll match you with the best expert</div>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', gap: 32 }}>
+
+            {/* Greeting */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 32, fontWeight: 700, color: 'var(--gray-800)', marginBottom: 8 }}>
+                How can I help you, {user?.name?.split(' ')[0]}?
+              </div>
+              <div style={{ fontSize: 15, color: 'var(--gray-500)' }}>
+                Describe your problem and we'll connect you with the right expert instantly.
+              </div>
+            </div>
+
+            {/* Input box */}
+            <form onSubmit={handleNewRequest} style={{ width: '100%', maxWidth: 680 }}>
+              <div style={{ position: 'relative', background: 'var(--white)', borderRadius: 16, border: '1px solid var(--gray-300)', boxShadow: '0 4px 24px rgba(0,0,0,0.3)', overflow: 'hidden' }}>
+                <textarea
+                  style={{ width: '100%', minHeight: 120, padding: '20px 20px 60px', background: 'transparent', border: 'none', outline: 'none', fontSize: 15, color: 'var(--gray-800)', resize: 'none', fontFamily: 'inherit', lineHeight: 1.6 }}
+                  placeholder="e.g. I need legal advice on a contract dispute..."
+                  value={newRequest}
+                  onChange={(e) => setNewRequest(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleNewRequest(e); } }}
+                />
+                <div style={{ position: 'absolute', bottom: 12, right: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 12, color: 'var(--gray-400)' }}>Press Enter to send</span>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    type="submit"
+                    disabled={submitting || !newRequest.trim()}
+                    style={{ borderRadius: 10, padding: '8px 18px', fontSize: 13 }}
+                  >
+                    {submitting ? 'Searching...' : '🔍 Find Expert'}
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Suggestion tabs */}
+            <div style={{ width: '100%', maxWidth: 680 }}>
+              <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 12, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.8, fontWeight: 600 }}>
+                Quick Start
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+                {[
+                  { icon: '🏥', label: 'Health Advisor',  color: '#34d399', topic: 'Persistent headache & fatigue',        intent: 'I want to review my symptoms',         prompt: 'I need medical advice about persistent headache & fatigue. I want to review my symptoms with an expert.' },
+                  { icon: '⚖️', label: 'Legal Advisor',   color: '#818cf8', topic: 'Contract dispute with my employer',    intent: 'I want to review my legal options',    prompt: 'I need legal advice regarding a contract dispute with my employer. I want to review my legal options.' },
+                  { icon: '💻', label: 'Code Advisor',    color: '#38bdf8', topic: 'Debugging a React useEffect issue',    intent: 'I want to review my code',             prompt: 'I need help with a coding problem: debugging a React useEffect issue. I want to review my code with an expert.' },
+                  { icon: '✍️', label: 'Post Advisor',    color: '#fb923c', topic: 'Launching my new product on LinkedIn', intent: 'I want to review my post draft',        prompt: 'I need help writing a post about launching my new product on LinkedIn. I want to review my post draft.' },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => setNewRequest(item.prompt)}
+                    style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8,
+                      padding: '16px', background: 'var(--white)', border: '1px solid var(--gray-200)',
+                      borderRadius: 14, cursor: 'pointer', transition: 'all 0.15s', textAlign: 'left',
+                      fontFamily: 'inherit',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = item.color; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--gray-200)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <span style={{ fontSize: 24 }}>{item.icon}</span>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-800)' }}>{item.label}</div>
+                      <div style={{ fontSize: 11, color: 'var(--gray-600)', marginTop: 2, lineHeight: 1.4 }}>{item.topic}</div>
+                      <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 3, lineHeight: 1.4, fontStyle: 'italic' }}>{item.intent}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
           </div>
         ) : (
           <>

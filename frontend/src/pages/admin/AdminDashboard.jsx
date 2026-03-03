@@ -70,19 +70,84 @@ function ProviderRow({ provider, onApprove, onReject, isUpdate }) {
       </tr>
       {expanded && (
         <tr>
-          <td colSpan={5} style={{ background:'var(--gray-50)', padding:'12px 16px' }}>
-            <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-              {provider.expertise?.map((ex,i)=>(
-                <div key={i} style={{ background:'var(--white)', borderRadius:8, padding:12, border:'1px solid var(--gray-200)' }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
-                    <span className="tag">{ex.domain}</span>
-                    {ex.yearsOfExperience>0 && <span className="text-sm text-gray">{ex.yearsOfExperience} yrs exp</span>}
-                  </div>
-                  {ex.description && <div className="text-sm" style={{marginBottom:6}}>{ex.description}</div>}
-                  {ex.tags?.length>0 && <div style={{display:'flex',flexWrap:'wrap',gap:4}}>{ex.tags.map((t,j)=><span key={j} className="badge badge-primary" style={{fontSize:11}}>{t}</span>)}</div>}
+          <td colSpan={5} style={{ background:'var(--gray-100)', padding:'16px 20px' }}>
+
+            {/* ── Profile Header ── */}
+            <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:16, padding:'16px', background:'var(--white)', borderRadius:10, border:'1px solid var(--gray-200)' }}>
+              <div style={{ width:56, height:56, borderRadius:'50%', background:'var(--primary)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, fontWeight:700, color:'var(--white)', flexShrink:0 }}>
+                {provider.name?.charAt(0).toUpperCase()}
+              </div>
+              <div style={{ flex:1 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
+                  <span style={{ fontSize:16, fontWeight:700 }}>{provider.name}</span>
+                  {isUpdate && <span className="badge badge-warning" style={{fontSize:10}}>Profile Update</span>}
+                  <span className={`badge ${provider.status==='approved'?'badge-success':provider.status==='rejected'?'badge-danger':'badge-warning'}`}>{provider.status}</span>
+                  {provider.isOnline && <span style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'var(--success)' }}><span style={{ width:7, height:7, borderRadius:'50%', background:'var(--success)', display:'inline-block' }}/> Online</span>}
                 </div>
-              ))}
+                <div style={{ display:'flex', gap:16, marginTop:4, flexWrap:'wrap' }}>
+                  <span className="text-sm text-gray">✉ {provider.email}</span>
+                  {provider.phone && <span className="text-sm text-gray">📞 {provider.phone}</span>}
+                  <span className="text-sm text-gray">📅 Joined {new Date(provider.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+              {/* Stats chips */}
+              <div style={{ display:'flex', gap:12, flexShrink:0 }}>
+                <div style={{ textAlign:'center', padding:'8px 14px', background:'var(--gray-100)', borderRadius:8 }}>
+                  <div style={{ fontSize:18, fontWeight:700, color:'var(--primary)' }}>{provider.completedTasks||0}</div>
+                  <div style={{ fontSize:10, color:'var(--gray-500)' }}>Tasks Done</div>
+                </div>
+                <div style={{ textAlign:'center', padding:'8px 14px', background:'var(--gray-100)', borderRadius:8 }}>
+                  <div style={{ fontSize:18, fontWeight:700, color:'var(--warning)' }}>{provider.rating?`★ ${provider.rating.toFixed(1)}`:'—'}</div>
+                  <div style={{ fontSize:10, color:'var(--gray-500)' }}>Rating</div>
+                </div>
+                <div style={{ textAlign:'center', padding:'8px 14px', background:'var(--gray-100)', borderRadius:8 }}>
+                  <div style={{ fontSize:18, fontWeight:700, color: provider.isAvailable?'var(--success)':'var(--danger)' }}>{provider.isAvailable?'Yes':'No'}</div>
+                  <div style={{ fontSize:10, color:'var(--gray-500)' }}>Available</div>
+                </div>
+              </div>
             </div>
+
+            {/* ── Bio ── */}
+            {provider.bio && (
+              <div style={{ marginBottom:12, padding:'12px 16px', background:'var(--white)', borderRadius:10, border:'1px solid var(--gray-200)' }}>
+                <div style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:0.8, color:'var(--gray-500)', marginBottom:6 }}>About</div>
+                <div className="text-sm" style={{ lineHeight:1.6 }}>{provider.bio}</div>
+              </div>
+            )}
+
+            {/* ── Rejection Reason ── */}
+            {provider.rejectionReason && (
+              <div style={{ marginBottom:12, padding:'12px 16px', background:'rgba(248,113,113,0.1)', borderRadius:10, border:'1px solid var(--danger)' }}>
+                <div style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:0.8, color:'var(--danger)', marginBottom:6 }}>Previous Rejection Reason</div>
+                <div className="text-sm">{provider.rejectionReason}</div>
+              </div>
+            )}
+
+            {/* ── Expertise Areas ── */}
+            <div>
+              <div style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:0.8, color:'var(--gray-500)', marginBottom:8 }}>Expertise Areas ({provider.expertise?.length||0})</div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:10 }}>
+                {provider.expertise?.map((ex,i)=>(
+                  <div key={i} style={{ background:'var(--white)', borderRadius:10, padding:'14px 16px', border:'1px solid var(--gray-200)' }}>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
+                      <span className="tag" style={{ fontSize:12, fontWeight:700 }}>{ex.domain}</span>
+                      {ex.yearsOfExperience>0 && (
+                        <span style={{ fontSize:11, color:'var(--gray-500)', background:'var(--gray-100)', padding:'2px 8px', borderRadius:20 }}>
+                          {ex.yearsOfExperience} yr{ex.yearsOfExperience>1?'s':''} exp
+                        </span>
+                      )}
+                    </div>
+                    {ex.description && <div className="text-sm" style={{ marginBottom:8, lineHeight:1.5, color:'var(--gray-600)' }}>{ex.description}</div>}
+                    {ex.tags?.length>0 && (
+                      <div style={{ display:'flex', flexWrap:'wrap', gap:4 }}>
+                        {ex.tags.map((t,j)=><span key={j} className="badge badge-primary" style={{fontSize:10}}>{t}</span>)}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </td>
         </tr>
       )}
