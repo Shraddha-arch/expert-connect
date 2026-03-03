@@ -202,7 +202,7 @@ export default function AdminDashboard() {
     <div style={{ display:'flex', height:'calc(100vh - 60px)' }}>
 
       {/* ── LEFT SIDEBAR ─────────────────────────────────────────────────── */}
-      <div style={{ width:220, background:'var(--gray-900)', color:'white', display:'flex', flexDirection:'column', flexShrink:0 }}>
+      <div style={{ width:220, background:'#0d1117', color:'white', display:'flex', flexDirection:'column', flexShrink:0 }}>
         <div style={{ padding:'20px 16px 12px', borderBottom:'1px solid rgba(255,255,255,0.1)' }}>
           <div style={{ fontSize:13, fontWeight:700, color:'rgba(255,255,255,0.5)', textTransform:'uppercase', letterSpacing:1 }}>Admin Panel</div>
         </div>
