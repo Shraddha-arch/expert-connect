@@ -404,12 +404,37 @@ export default function CustomerChatPage() {
 
   /* ─── Quick actions ──────────────────────────────────────────────────── */
   const quickActions = [
-    { label: '⚖️ Legal Advice',   prompt: 'I need legal advice regarding ' },
-    { label: '💊 Medical Help',   prompt: 'I need medical guidance about ' },
-    { label: '💻 Tech Support',   prompt: 'I need technical help with ' },
-    { label: '📈 Financial Plan', prompt: 'I need financial advice on ' },
-    { label: '🤝 Business Coach', prompt: 'I need business coaching for ' },
+    { label: '⚖️ Legal Advice',   prompt: 'I need legal advice regarding ', example: 'e.g. My landlord won\'t return my deposit' },
+    { label: '💊 Medical Help',   prompt: 'I need medical guidance about ', example: 'e.g. I have chest pain for 2 days' },
+    { label: '💻 Tech Support',   prompt: 'I need technical help with ',   example: 'e.g. My app keeps crashing on login' },
+    { label: '📈 Financial Plan', prompt: 'I need financial advice on ',   example: 'e.g. Filing taxes for freelance income' },
+    { label: '🤝 Business Coach', prompt: 'I need business coaching for ', example: 'e.g. Scaling my small business' },
   ];
+
+  /* ─── Rotating placeholder ───────────────────────────────────────────── */
+  const placeholderExamples = quickActions.map(a => a.prompt + a.example.replace('e.g. ', '').toLowerCase());
+  const [phIdx, setPhIdx] = useState(0);
+  const [typedPh, setTypedPh] = useState('');
+  useEffect(() => {
+    if (newRequest) return; // don't animate while user is typing
+    let charIdx = 0;
+    let deleting = false;
+    let current = placeholderExamples[phIdx];
+    const tick = () => {
+      if (!deleting) {
+        setTypedPh(current.slice(0, charIdx + 1));
+        charIdx++;
+        if (charIdx === current.length) { deleting = true; setTimeout(tick, 1600); return; }
+      } else {
+        setTypedPh(current.slice(0, charIdx - 1));
+        charIdx--;
+        if (charIdx === 0) { deleting = false; setPhIdx(i => (i + 1) % placeholderExamples.length); return; }
+      }
+      setTimeout(tick, deleting ? 35 : 55);
+    };
+    const t = setTimeout(tick, 400);
+    return () => clearTimeout(t);
+  }, [phIdx, newRequest]); // eslint-disable-line
 
   /* ════════════════════════════════════════════════════════════════════
      RENDER
@@ -560,7 +585,7 @@ export default function CustomerChatPage() {
                     fontSize: 15, color: '#e8e8e8', resize: 'none',
                     fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box',
                   }}
-                  placeholder="Describe your problem in plain English… e.g. My landlord won't return my deposit"
+                  placeholder={typedPh || 'Describe your problem in plain English…'}
                   value={newRequest}
                   onChange={(e) => {
                     setNewRequest(e.target.value);
