@@ -292,9 +292,9 @@ export default function CustomerChatPage() {
       setTasks((p) => p.map((t) => t._id === taskId ? { ...t, status: 'completed', amount } : t));
       setActiveTask((p) => p?._id === taskId ? { ...p, status: 'completed', amount } : p);
     };
-    const onCompletionReq    = ({ taskId }) => {
-      setTasks((p) => p.map((t) => t._id === taskId ? { ...t, status: 'pending_completion' } : t));
-      setActiveTask((p) => p?._id === taskId ? { ...p, status: 'pending_completion' } : p);
+    const onCompletionReq    = ({ taskId, price }) => {
+      setTasks((p) => p.map((t) => t._id === taskId ? { ...t, status: 'pending_completion', price } : t));
+      setActiveTask((p) => p?._id === taskId ? { ...p, status: 'pending_completion', price } : p);
     };
     const onTyping           = ({ name }) => { setTypingUser(name); clearTimeout(typingTimerRef.current); typingTimerRef.current = setTimeout(() => setTypingUser(null), 2000); };
     const onStopTyping       = () => setTypingUser(null);
