@@ -473,11 +473,6 @@ export default function CustomerChatPage() {
             alignItems: 'center', justifyContent: 'center',
             padding: '0 24px 60px', overflowY: 'auto',
           }}>
-            {/* Asterisk logo */}
-            <div style={{ marginBottom: 20 }}>
-              <AsteriskLogo size={52} />
-            </div>
-
             {/* Greeting */}
             <h1 style={{
               fontSize: 28, fontWeight: 700, color: '#e8e8e8',
@@ -533,7 +528,6 @@ export default function CustomerChatPage() {
                     background: '#1e1e1e', border: '1px solid #333', borderRadius: 20,
                     padding: '5px 10px', fontSize: 11.5, color: '#888', cursor: 'default',
                   }}>
-                    <AsteriskLogo size={12} />
                     <span>ExpertConnect</span>
                   </div>
                   {/* Send button */}
@@ -626,7 +620,6 @@ export default function CustomerChatPage() {
                   <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid #cc785c', opacity: 0.15, animation: 'pulse 2s infinite' }} />
                   <div style={{ position: 'absolute', inset: 10, borderRadius: '50%', border: '1.5px solid #cc785c', opacity: 0.3, animation: 'pulse 2s infinite 0.6s' }} />
                   <div style={{ position: 'absolute', inset: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <AsteriskLogo size={26} />
                   </div>
                 </div>
                 <div>
@@ -755,7 +748,6 @@ export default function CustomerChatPage() {
             padding: '36px 32px', maxWidth: 420, width: '100%', textAlign: 'center',
             boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
           }}>
-            <div style={{ marginBottom: 16 }}><AsteriskLogo size={44} /></div>
             <div style={{ fontSize: 18, fontWeight: 700, color: '#e8e8e8', marginBottom: 10 }}>
               No expert available yet
             </div>
