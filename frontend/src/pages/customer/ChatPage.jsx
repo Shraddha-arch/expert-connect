@@ -404,11 +404,11 @@ export default function CustomerChatPage() {
 
   /* ─── Quick actions ──────────────────────────────────────────────────── */
   const quickActions = [
-    { label: 'Legal Advice',   prompt: 'I need legal advice regarding ' },
-    { label: 'Medical Help',   prompt: 'I need medical guidance about ' },
-    { label: 'Tech Support',   prompt: 'I need technical help with ' },
-    { label: 'Financial Plan', prompt: 'I need financial advice on ' },
-    { label: 'Business Coach', prompt: 'I need business coaching for ' },
+    { label: '⚖️ Legal Advice',   prompt: 'I need legal advice regarding ' },
+    { label: '💊 Medical Help',   prompt: 'I need medical guidance about ' },
+    { label: '💻 Tech Support',   prompt: 'I need technical help with ' },
+    { label: '📈 Financial Plan', prompt: 'I need financial advice on ' },
+    { label: '🤝 Business Coach', prompt: 'I need business coaching for ' },
   ];
 
   /* ════════════════════════════════════════════════════════════════════
@@ -606,7 +606,18 @@ export default function CustomerChatPage() {
               {quickActions.map((action) => (
                 <button
                   key={action.label}
-                  onClick={() => { setNewRequest(action.prompt); textareaRef.current?.focus(); }}
+                  onClick={() => {
+                    setNewRequest(action.prompt);
+                    setTimeout(() => {
+                      const ta = textareaRef.current;
+                      if (ta) {
+                        ta.focus();
+                        ta.style.height = 'auto';
+                        ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
+                        ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }
+                    }, 50);
+                  }}
                   style={{
                     padding: '7px 16px', background: '#252525', border: '1px solid #333',
                     borderRadius: 20, color: '#9a9a9a', fontSize: 13, cursor: 'pointer',
