@@ -194,10 +194,21 @@ function MessageBubble({ message, myId }) {
 /* ══════════════════════════════════════════════════════════════════════════
    MAIN PAGE
 ══════════════════════════════════════════════════════════════════════════ */
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return isMobile;
+}
+
 export default function CustomerChatPage() {
   const { user } = useAuth();
   const { getSocket } = useSocket();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   const [tasks, setTasks]                     = useState([]);
   const [activeTask, setActiveTask]           = useState(null);
@@ -213,6 +224,7 @@ export default function CustomerChatPage() {
   const [approvingCompletion, setApprovingCompletion] = useState(false);
   const [waitDialog, setWaitDialog]           = useState(null);
   const [extending, setExtending]             = useState(false);
+  const [sidebarOpen, setSidebarOpen]         = useState(false);
 
   const messagesEndRef = useRef(null);
   const typingTimerRef = useRef(null);
@@ -403,13 +415,28 @@ export default function CustomerChatPage() {
      RENDER
   ════════════════════════════════════════════════════════════════════ */
   return (
-    <div style={{ display: 'flex', height: 'calc(100vh - 60px)', overflow: 'hidden', background: '#1a1a1a', color: '#e0e0e0' }}>
+    <div style={{ display: 'flex', height: 'calc(100vh - 60px)', overflow: 'hidden', background: '#1a1a1a', color: '#e0e0e0', position: 'relative' }}>
+
+      {/* ══ MOBILE SIDEBAR OVERLAY ══════════════════════════════════════ */}
+      {isMobile && sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 90 }}
+        />
+      )}
 
       {/* ══ LEFT SIDEBAR ════════════════════════════════════════════════ */}
       <div style={{
-        width: 256, flexShrink: 0, background: '#171717',
+        width: isMobile ? '80vw' : 256,
+        maxWidth: isMobile ? 320 : 256,
+        flexShrink: 0, background: '#171717',
         borderRight: '1px solid #252525', display: 'flex', flexDirection: 'column',
         overflow: 'hidden',
+        ...(isMobile ? {
+          position: 'fixed', top: 60, left: 0, bottom: 0, zIndex: 100,
+          transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.25s ease',
+        } : {}),
       }}>
 
         {/* Top actions: New chat + Search */}
@@ -464,14 +491,37 @@ export default function CustomerChatPage() {
       </div>
 
       {/* ══ MAIN AREA ═══════════════════════════════════════════════════ */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#1a1a1a' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#1a1a1a', minWidth: 0 }}>
+
+        {/* Mobile top bar */}
+        {isMobile && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 14px', borderBottom: '1px solid #252525', background: '#171717',
+          }}>
+            <button
+              onClick={() => setSidebarOpen(v => !v)}
+              style={{
+                background: 'transparent', border: 'none', color: '#888', cursor: 'pointer',
+                padding: 6, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </button>
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#cc785c' }}>
+              {activeTask ? (activeTask.serviceProviderId ? `Chat with ${activeTask.serviceProviderId.name}` : 'ExpertConnect') : 'ExpertConnect'}
+            </span>
+          </div>
+        )}
 
         {!activeTask ? (
           /* ── EMPTY STATE (Claude home screen) ─────────────────────── */
           <div style={{
             flex: 1, display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
-            padding: '0 24px 60px', overflowY: 'auto',
+            padding: isMobile ? '0 16px 40px' : '0 24px 60px', overflowY: 'auto',
           }}>
             {/* Greeting */}
             <h1 style={{

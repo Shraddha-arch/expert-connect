@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
@@ -106,7 +106,7 @@ function ProfileEditor({ user, onSaved }) {
         <h3 style={{fontSize:15,fontWeight:700,marginBottom:4}}>Basic Information</h3>
         <p className="text-sm text-gray" style={{marginBottom:14}}>Saves instantly — no admin review needed.</p>
         <form onSubmit={saveBasic} style={{display:'flex',flexDirection:'column',gap:12}}>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+          <div className="form-grid-2">
             <div className="form-group"><label className="form-label">Full Name *</label><input className="form-input" value={basic.name} onChange={e=>setBasic(f=>({...f,name:e.target.value}))} required/></div>
             <div className="form-group"><label className="form-label">Phone</label><input className="form-input" value={basic.phone} onChange={e=>setBasic(f=>({...f,phone:e.target.value}))}/></div>
           </div>
@@ -127,7 +127,7 @@ function ProfileEditor({ user, onSaved }) {
                 <span style={{fontWeight:600,fontSize:13}}>Domain #{i+1}</span>
                 {expList.length>1 && <button type="button" className="btn btn-ghost btn-sm" style={{color:'var(--danger)',padding:'2px 8px'}} onClick={()=>setExpList(p=>p.filter((_,j)=>j!==i))}>Remove</button>}
               </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}>
+              <div className="form-grid-2" style={{marginBottom:10}}>
                 <div className="form-group"><label className="form-label">Domain *</label>
                   <select className="form-select" value={ex.domain} onChange={e=>updateExp(i,'domain',e.target.value)} required>
                     <option value="">Select domain</option>
@@ -154,10 +154,21 @@ function ProfileEditor({ user, onSaved }) {
   );
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return isMobile;
+}
+
 // ── Main Dashboard ──────────────────────────────────────────────────────────
 export default function ProviderDashboard() {
   const { user, updateUser } = useAuth();
   const { getSocket } = useSocket();
+  const isMobile = useIsMobile();
 
   const [view, setView] = useState('tasks');              // 'tasks' | 'profile'
   const [activeTab, setActiveTab] = useState('available'); // 'available' | 'mine'
@@ -359,8 +370,14 @@ export default function ProviderDashboard() {
       {view==='tasks' && (
         <div style={{flex:1,display:'flex',overflow:'hidden'}}>
 
-          {/* LEFT — task lists */}
-          <div style={{width:320,borderRight:'1px solid #2a2a2a',display:'flex',flexDirection:'column',background:'#141414'}}>
+          {/* LEFT — task lists (hidden on mobile when chat is open) */}
+          <div style={{
+            width: isMobile ? '100%' : 320,
+            borderRight: isMobile ? 'none' : '1px solid #2a2a2a',
+            display: isMobile && activeTask ? 'none' : 'flex',
+            flexDirection:'column', background:'#141414',
+            flexShrink: 0,
+          }}>
 
             {/* Sub-tabs */}
             <div style={{display:'flex',borderBottom:'1px solid #2a2a2a'}}>
@@ -463,8 +480,8 @@ export default function ProviderDashboard() {
             )}
           </div>
 
-          {/* RIGHT — Chat */}
-          <div className="chat-main">
+          {/* RIGHT — Chat (hidden on mobile when no task) */}
+          <div className="chat-main" style={{ display: isMobile && !activeTask ? 'none' : 'flex' }}>
             {!activeTask ? (
               <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:12,color:'var(--gray-400)'}}>
                 <div style={{fontSize:56}}>💬</div>
@@ -474,9 +491,19 @@ export default function ProviderDashboard() {
             ) : (
               <>
                 <div className="chat-header">
-                  <div style={{flex:1}}>
+                  {isMobile && (
+                    <button
+                      onClick={() => setActiveTask(null)}
+                      style={{background:'transparent',border:'none',color:'#888',cursor:'pointer',padding:'4px 8px 4px 0',display:'flex',alignItems:'center'}}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                      </svg>
+                    </button>
+                  )}
+                  <div style={{flex:1,minWidth:0}}>
                     <div style={{fontWeight:700}}>Chat with {activeTask.customerId?.name||'Customer'}</div>
-                    <div className="text-sm text-gray truncate" style={{maxWidth:400}}>{activeTask.description}</div>
+                    <div className="text-sm text-gray truncate" style={{maxWidth: isMobile ? '60vw' : 400}}>{activeTask.description}</div>
                   </div>
                   <span className={`badge ${sc[activeTask.status]||'badge-gray'}`}>{activeTask.status}</span>
                 </div>
