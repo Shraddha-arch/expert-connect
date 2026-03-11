@@ -192,6 +192,7 @@ router.post('/:id/accept', protect, requireRole('service_provider'), requireAppr
       taskId: task._id,
       provider: populated.serviceProviderId,
       chatRoomId: task.chatRoomId,
+      price,
     });
     // Tell all providers this task is gone
     io.to('providers_online').emit('task_taken', { taskId: task._id });

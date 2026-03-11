@@ -275,9 +275,9 @@ export default function CustomerChatPage() {
     if (!socket) return;
 
     const onNewMessage       = (msg) => { setMessages((p) => [...p, msg]); setTimeout(scrollToBottom, 50); };
-    const onTaskAssigned     = ({ taskId, provider }) => {
-      setTasks((p) => p.map((t) => t._id === taskId ? { ...t, status: 'assigned', serviceProviderId: provider } : t));
-      setActiveTask((p) => p?._id === taskId ? { ...p, status: 'assigned', serviceProviderId: provider } : p);
+    const onTaskAssigned     = ({ taskId, provider, price }) => {
+      setTasks((p) => p.map((t) => t._id === taskId ? { ...t, status: 'assigned', serviceProviderId: provider, price } : t));
+      setActiveTask((p) => p?._id === taskId ? { ...p, status: 'assigned', serviceProviderId: provider, price } : p);
       setStatusMsg(`Expert ${provider.name} has been assigned!`);
       setTimeout(() => setStatusMsg(''), 5000);
     };
