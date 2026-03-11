@@ -404,11 +404,11 @@ export default function CustomerChatPage() {
 
   /* ─── Quick actions ──────────────────────────────────────────────────── */
   const quickActions = [
-    { label: '⚖️ Legal Advice',   prompt: 'I need legal advice regarding ', example: 'e.g. My landlord won\'t return my deposit' },
-    { label: '💊 Medical Help',   prompt: 'I need medical guidance about ', example: 'e.g. I have chest pain for 2 days' },
-    { label: '💻 Tech Support',   prompt: 'I need technical help with ',   example: 'e.g. My app keeps crashing on login' },
-    { label: '📈 Financial Plan', prompt: 'I need financial advice on ',   example: 'e.g. Filing taxes for freelance income' },
-    { label: '🤝 Business Coach', prompt: 'I need business coaching for ', example: 'e.g. Scaling my small business' },
+    { label: '📋 Review SOP',        prompt: 'Please review this SOP and provide feedback: ', example: 'e.g. Our onboarding SOP needs compliance review' },
+    { label: '💻 Code Review',       prompt: 'Please review this code and suggest improvements: ', example: 'e.g. Review my Python data pipeline for bugs' },
+    { label: '🏥 Healthcare Report', prompt: 'Please review this healthcare report: ', example: 'e.g. Analyze this patient lab results report' },
+    { label: '📄 Document Review',   prompt: 'Please review this document and provide feedback: ', example: 'e.g. Review my business proposal document' },
+    { label: '📊 Business Report',   prompt: 'Please review this business report: ', example: 'e.g. Review our Q3 financial performance report' },
   ];
 
   /* ─── Rotating placeholder ───────────────────────────────────────────── */
@@ -585,7 +585,7 @@ export default function CustomerChatPage() {
                     fontSize: 15, color: '#e8e8e8', resize: 'none',
                     fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box',
                   }}
-                  placeholder={typedPh || 'Describe your problem in plain English…'}
+                  placeholder={typedPh || 'Describe the document or task you need reviewed…'}
                   value={newRequest}
                   onChange={(e) => {
                     setNewRequest(e.target.value);
@@ -663,10 +663,10 @@ export default function CustomerChatPage() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {[
-                  { icon: '⚖️', text: 'My landlord refused to return my security deposit after 3 months.' },
-                  { icon: '💊', text: 'I have chest pain and shortness of breath for 2 days — what should I do?' },
-                  { icon: '💻', text: 'My React app crashes with "Cannot read property of undefined" error.' },
-                  { icon: '📈', text: 'I need help filing taxes for my freelance income this year.' },
+                  { icon: '📋', text: 'Review my case report on employee onboarding SOP compliance.' },
+                  { icon: '💻', text: 'Review my case report on API authentication and security vulnerabilities.' },
+                  { icon: '🏥', text: 'Review my case report on patient post-surgery lab results.' },
+                  { icon: '📄', text: 'Review my case report on vendor contract terms and risk clauses.' },
                 ].map((ex, i) => (
                   <button
                     key={i}

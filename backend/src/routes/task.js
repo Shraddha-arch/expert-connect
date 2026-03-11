@@ -178,7 +178,7 @@ router.post('/:id/accept', protect, requireRole('service_provider'), requireAppr
       chatRoomId: task.chatRoomId,
       senderId: req.user._id,
       senderRole: 'system',
-      content: `✅ Expert ${req.user.name} has accepted your request.\n💰 Quoted price: $${parseFloat(price).toFixed(2)}\n\nPlease share your full task details in the chat to get started.`,
+      content: `✅ Expert ${req.user.name} has accepted your request.\n\nPlease share your full task details in the chat to get started.`,
       type: 'system',
     });
 

@@ -523,12 +523,7 @@ export default function ProviderDashboard() {
                       <input className="chat-input" value={inputText} onChange={handleTyping} placeholder="Type your message…" autoFocus/>
                       <button className="btn btn-primary" type="submit" disabled={!inputText.trim()}>Send</button>
                     </form>
-                    <div style={{padding:'10px 20px',borderTop:'1px solid var(--gray-200)',background:'var(--gray-100)',display:'flex',gap:10,alignItems:'center',justifyContent:'space-between'}}>
-                      <div style={{fontSize:13,color:'var(--gray-500)'}}>
-                        Agreed price: <strong style={{color:'var(--success)'}}>
-                          {activeTask.price > 0 ? `$${activeTask.price.toFixed(2)}` : '—'}
-                        </strong>
-                      </div>
+                    <div style={{padding:'10px 20px',borderTop:'1px solid var(--gray-200)',background:'var(--gray-100)',display:'flex',gap:10,alignItems:'center',justifyContent:'flex-end'}}>
                       <button className="btn btn-success btn-sm" onClick={requestCompletion} disabled={completingTask}>
                         {completingTask ? 'Requesting…' : '🏁 Request Completion'}
                       </button>
