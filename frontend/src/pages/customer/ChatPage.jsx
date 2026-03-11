@@ -55,7 +55,7 @@ const IconPlus = () => (
 );
 
 /* ── Asterisk / Claude logo ─────────────────────────────────────────────── */
-function AsteriskLogo({ size = 48 }) {
+function AsteriskLogo({ size = 48 }) { // eslint-disable-line no-unused-vars
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none">
       {[0, 30, 60, 90, 120, 150].map((deg) => (
@@ -560,7 +560,7 @@ export default function CustomerChatPage() {
                     fontSize: 15, color: '#e8e8e8', resize: 'none',
                     fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box',
                   }}
-                  placeholder="How can I help you today?"
+                  placeholder="Describe your problem in plain English… e.g. My landlord won't return my deposit"
                   value={newRequest}
                   onChange={(e) => {
                     setNewRequest(e.target.value);
@@ -629,6 +629,49 @@ export default function CustomerChatPage() {
                   {action.label}
                 </button>
               ))}
+            </div>
+
+            {/* Example queries */}
+            <div style={{ marginTop: 24, maxWidth: 680, width: '100%' }}>
+              <div style={{ fontSize: 11, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, marginBottom: 10, textAlign: 'center' }}>
+                Example queries
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {[
+                  { icon: '⚖️', text: 'My landlord refused to return my security deposit after 3 months.' },
+                  { icon: '💊', text: 'I have chest pain and shortness of breath for 2 days — what should I do?' },
+                  { icon: '💻', text: 'My React app crashes with "Cannot read property of undefined" error.' },
+                  { icon: '📈', text: 'I need help filing taxes for my freelance income this year.' },
+                ].map((ex, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setNewRequest(ex.text);
+                      setTimeout(() => {
+                        const ta = textareaRef.current;
+                        if (ta) {
+                          ta.focus();
+                          ta.style.height = 'auto';
+                          ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
+                          ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                      }, 50);
+                    }}
+                    style={{
+                      display: 'flex', alignItems: 'flex-start', gap: 10,
+                      padding: '10px 14px', background: 'transparent',
+                      border: '1px solid #2a2a2a', borderRadius: 10,
+                      cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
+                      transition: 'all 0.15s', width: '100%',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = '#1e1e1e'; e.currentTarget.style.borderColor = '#3a3a3a'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = '#2a2a2a'; }}
+                  >
+                    <span style={{ fontSize: 16, flexShrink: 0 }}>{ex.icon}</span>
+                    <span style={{ fontSize: 13, color: '#5a5a5a', lineHeight: 1.5 }}>{ex.text}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
